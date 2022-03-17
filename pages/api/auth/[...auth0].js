@@ -20,15 +20,6 @@ const handlers = handleAuth({
       res.status(error.status || 400).end(error.message)
     }
   },
-  async logout(req, res) {
-    try {
-      await handleLogout(req, res, {
-        returnTo: "https://withdeck.com",
-      })
-    } catch (error) {
-      res.status(error.status || 400).end(error.message)
-    }
-  },
 })
 
 export default handlers
