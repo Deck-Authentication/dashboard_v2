@@ -2,6 +2,8 @@ const express = require("express")
 const router = express.Router()
 const jwt = require("express-jwt")
 const jwks = require("jwks-rsa")
+const githubRouter = require("./github")
+const memberRouter = require("./member")
 
 const jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
@@ -22,12 +24,12 @@ router.use(require("helmet")())
 // Secure the backend auth0 API management in production mode
 process.env.ENVIRONMENT === "production" ? app.use(jwtCheck) : null
 
-router.get("/test", (_, res) => {
-  res.status(200).send("Hi")
+router.get("/ping", (_, res) => {
+  res.status(200).send("The backend is alive")
 })
 
-router.get("/protected", (req, res) => {
-  res.status(200).json({ msg: "We made it! And it's great" })
-})
+router.get("/github", githubRouter)
+
+router.get("/member", memberRouter)
 
 module.exports = router
