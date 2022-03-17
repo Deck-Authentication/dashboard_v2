@@ -19,7 +19,14 @@ router.use(express.json())
 router.use(express.urlencoded({ extended: true }))
 router.use(require("helmet")())
 
-router.get("/protected", jwtCheck, (req, res) => {
+// Secure the backend auth0 API management in production mode
+process.env.ENVIRONMENT === "production" ? app.use(jwtCheck) : null
+
+router.get("/test", (_, res) => {
+  res.status(200).send("Hi")
+})
+
+router.get("/protected", (req, res) => {
   res.status(200).json({ msg: "We made it! And it's great" })
 })
 

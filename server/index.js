@@ -2,6 +2,7 @@ const express = require("express")
 const next = require("next")
 const backendRouter = require("./routes/index.js")
 const path = require("path")
+const { connectDB } = require("./database")
 /* It's loading the .env file and making the variables available to the rest of the application. */
 require("dotenv").config({ path: path.join(__dirname, "..", ".env.local") })
 const PORT = process.env.PORT || 3000
@@ -14,8 +15,9 @@ app
   .then(() => {
     const server = express()
 
-    server.use("/api", backendRouter)
+    connectDB.call(this)
 
+    server.use("/api", backendRouter)
     server.get("*", (req, res) => {
       return handle(req, res)
     })
@@ -26,6 +28,7 @@ app
     })
   })
   .catch((exception) => {
+    console.log("having an exception here")
     console.error(exception.stack)
     process.exit(1)
   })
