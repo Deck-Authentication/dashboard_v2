@@ -3,14 +3,14 @@ import Link from "next/link"
 export default function Menu() {
   return (
     <aside className="min-h-full bg-zinc-800 text-white py-5 px-3" style={{ width: "300px" }}>
-      <Link href="/" passHref={true}>
+      <Link href="/team" passHref={true}>
         <a>
           <h1 className="text-indigo-400 text-4xl px-3 mb-3 font-bold">Deck</h1>
         </a>
       </Link>
       <ul className="p-4 overflow-y-auto w-full text-base-content">
         <li>
-          <Link href="/template" passHref={true}>
+          <Link href="/team" passHref={true}>
             <a className="flex flex-row my-px p-3 rounded-lg hover:bg-slate-700">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +29,7 @@ export default function Menu() {
                   d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
                 />
               </svg>
-              Template
+              Team
             </a>
           </Link>
         </li>
