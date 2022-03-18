@@ -2,7 +2,7 @@
   "name": "dashboard_v2",
   "private": true,
   "scripts": {
-    "dev": "nodemon server/index.js",
+    "dev": "next",
     "build": "next build",
     "start": "node server/index.js",
     "lint": "next lint"

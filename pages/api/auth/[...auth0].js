@@ -1,4 +1,4 @@
-import { handleAuth, handleLogin, handleLogout } from "@auth0/nextjs-auth0"
+import { handleAuth, handleLogin } from "@auth0/nextjs-auth0"
 import { config } from "dotenv"
 
 config()
@@ -23,3 +23,4 @@ const handlers = handleAuth({
 })
 
 export default handlers
+// export default handleAuth()
