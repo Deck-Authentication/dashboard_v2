@@ -132,3 +132,14 @@ export function useUsers(url = "") {
     isUsersLoadingFailed: error,
   }
 }
+
+export function useAdminData(url = "", email = "") {
+  const fetcher = async (url, userEmail) => {
+    const accessToken = await getAccessToken()
+    return await axios
+      .get(`${url}?email=${userEmail}`, { headers: { Authorization: `Bearer ${accessToken}` } })
+      .then((res) => res.data.admin)
+  }
+
+  return useSWR([url, email], fetcher)
+}

@@ -1,28 +1,24 @@
-import useSWR from "swr"
-import { getAccessToken } from "../../utils"
-import axios from "axios"
-import { useEffect } from "react"
-
-const fetcher = async (url) => {
-  const accessToken = await getAccessToken()
-  return await axios.get(url, { headers: { Authorization: `Bearer ${accessToken}` } }).then((res) => res.data)
-}
+import { useUser } from "@auth0/nextjs-auth0"
+import { useAdminData } from "../../utils"
 
 export default function Team({ BACKEND_URL }) {
-  const { data, error } = useSWR(`${BACKEND_URL}/profile`, fetcher)
+  const { user } = useUser()
+  const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`, user.email)
 
   if (error) return <div>failed to load</div>
   if (!data) return <div>loading...</div>
 
-  return <div>{JSON.stringify(data)}</div>
-  // useEffect(() => {
-  //   ;(async function () {
-  //     const accessToken = await getAccessToken()
-  //     console.log(`accessToken: ${accessToken}`)
-  //   })()
-  // })
+  const { teams, members } = data
 
-  // return <div>Team</div>
+  return (
+    <div>
+      {teams.length > 0 ? (
+        teams.map()
+      ) : (
+        <div>No teams found. Start adding team by importing from Github or input them manually.</div>
+      )}
+    </div>
+  )
 }
 
 export async function getStaticProps() {

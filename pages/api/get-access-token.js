@@ -5,7 +5,7 @@ export default withApiAuthRequired(async function handler(req, res) {
   // `getAccessToken` will fetch you a new one using the `refresh_token` grant
 
   const { accessToken } = await getAccessToken(req, res, {
-    scopes: ["read:current_user"],
+    scopes: ["read:current_user", "profile", "email"],
   })
 
   res.status(200).json({ accessToken })
