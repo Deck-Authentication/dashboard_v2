@@ -14,11 +14,14 @@ export default function AppWrapper(props) {
     }
     getAccessToken()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  })
 
   return <AppContext.Provider value={[context, setContext]}>{props.children}</AppContext.Provider>
 }
 
 export function useAppContext() {
+  const context = useContext(AppContext)
+
+  if (context === undefined) throw new Error("useAppContext must be used within the Context Provider- AppWrapper")
   return useContext(AppContext)
 }
