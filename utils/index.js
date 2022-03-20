@@ -133,13 +133,11 @@ export function useUsers(url = "") {
   }
 }
 
-export function useAdminData(url = "", email = "") {
-  const fetcher = async (url, userEmail) => {
+export function useAdminData(url = "") {
+  const fetcher = async (url) => {
     const accessToken = await getAccessToken()
-    return await axios
-      .get(`${url}?email=${userEmail}`, { headers: { Authorization: `Bearer ${accessToken}` } })
-      .then((res) => res.data.admin)
+    return await axios.get(`${url}`, { headers: { Authorization: `Bearer ${accessToken}` } }).then((res) => res.data.admin)
   }
 
-  return useSWR([url, email], fetcher)
+  return useSWR(url, fetcher)
 }

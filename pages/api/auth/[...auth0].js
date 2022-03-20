@@ -14,6 +14,7 @@ const handlers = handleAuth({
           audience: audience, // or AUTH0_AUDIENCE
           // Add the `offline_access` scope to also get a Refresh Token
           scope: "openid profile email offline_access read:current_user", // or AUTH0_SCOPE
+          grant_type: "client_credentials",
         },
       })
     } catch (error) {
