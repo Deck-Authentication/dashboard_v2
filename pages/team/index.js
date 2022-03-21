@@ -1,9 +1,7 @@
-import { useUser } from "@auth0/nextjs-auth0"
 import { useAdminData } from "../../utils"
 
 export default function Team({ BACKEND_URL }) {
-  const { user } = useUser()
-  const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`, user.email)
+  const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
 
   if (error) return <div>failed to load</div>
   if (!data) return <div>loading...</div>
@@ -12,7 +10,7 @@ export default function Team({ BACKEND_URL }) {
 
   return (
     <div>
-      {teams.length > 0 ? (
+      {teams?.length > 0 ? (
         teams.map()
       ) : (
         <div>No teams found. Start adding team by importing from Github or input them manually.</div>
