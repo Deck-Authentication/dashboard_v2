@@ -1,6 +1,8 @@
 import Menu from "./menu.js"
 import Header from "./header.js"
 import { withPageAuthRequired } from "@auth0/nextjs-auth0"
+import "react-toastify/dist/ReactToastify.css"
+import { ToastContainer } from "react-toastify"
 
 function Layout(props) {
   return (
@@ -9,6 +11,7 @@ function Layout(props) {
       <div className="w-full h-screen flex flex-col">
         <Header />
         <section className="w-full flex-auto">{props.children}</section>
+        <ToastContainer />
       </div>
     </div>
   )
