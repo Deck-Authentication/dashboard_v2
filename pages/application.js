@@ -85,7 +85,7 @@ function AppSettings({ header, label, github, handleSave }) {
           }}
         >
           {({ isSubmitting }) => (
-            <Form className="bg-white h-5/6 overflow-y-scroll rounded-lg" style={{ minWidth: "700px" }}>
+            <Form className="bg-white overflow-y-scroll rounded-lg" style={{ minWidth: "700px", maxHeight: "80%" }}>
               <label className="modal-box relative p-0" htmlFor="">
                 <div className="modal-header text-xl font-bold p-4 w-full flex flex-row justify-between">
                   <h3>{header}</h3>
@@ -148,8 +148,8 @@ function AppSettings({ header, label, github, handleSave }) {
                         />
                       </svg>
                       <span>
-                        Warning: Picking a new organization will reload your Github teams under the Team tab. Make sure your
-                        configurations are accurate.
+                        Warning: Adding a new <i>Organization</i> will reload your Github teams under the Team tab. Make sure
+                        your configurations are accurate.
                       </span>
                     </div>
                   </div>

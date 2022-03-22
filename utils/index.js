@@ -144,7 +144,7 @@ export function useAdminData(url = "") {
 
 export async function saveGithubCredentials(url = "", apiKey = "", organization = "") {
   const accessToken = await getAccessToken()
-  return await axios
+  const result = await axios
     .post(
       url,
       { apiKey, organization },
@@ -154,8 +154,9 @@ export async function saveGithubCredentials(url = "", apiKey = "", organization 
         },
       }
     )
-    .catch((err) => {
-      console.error(err)
-      throw new Error(err)
-    })
+    .then((res) => res.data)
+
+  if (!result?.ok) throw new Error(result?.message)
+
+  return result
 }
