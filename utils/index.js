@@ -141,3 +141,21 @@ export function useAdminData(url = "") {
 
   return useSWR(url, fetcher)
 }
+
+export async function saveGithubCredentials(url = "", apiKey = "", organization = "") {
+  const accessToken = await getAccessToken()
+  return await axios
+    .post(
+      url,
+      { apiKey, organization },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+    .catch((err) => {
+      console.error(err)
+      throw new Error(err)
+    })
+}

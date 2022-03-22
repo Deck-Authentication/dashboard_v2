@@ -11,6 +11,7 @@ function Layout(props) {
       <div className="w-full h-screen flex flex-col">
         <Header />
         <section className="w-full flex-auto">{props.children}</section>
+        {/* One single toast container for the whole project to avoid conflicts */}
         <ToastContainer />
       </div>
     </div>

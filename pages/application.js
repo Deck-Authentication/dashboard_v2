@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCog, faTimes, faArrowRight } from "@fortawesome/free-solid-svg-icons"
 import Github_Mark from "../assets/Github_Mark.png"
 import Image from "next/image"
-import { useAdminData } from "../utils"
+import { useAdminData, saveGithubCredentials } from "../utils"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import { useRef } from "react"
-import { toast, ToastContainer } from "react-toastify"
+import { toast } from "react-toastify"
 
 export default function Application({ BACKEND_URL }) {
   const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
@@ -16,16 +16,25 @@ export default function Application({ BACKEND_URL }) {
 
   const { github } = data
 
-  const saveGithubApiKey = () => {}
-  const fireAlert = () => {
-    const toastOption = {
-      autoClose: 4000,
-      type: toast.TYPE.SUCCESS,
-      hideProgressBar: false,
-      position: toast.POSITION.BOTTOM_CENTER,
-      pauseOnHover: true,
-    }
-    toast.success(`Github API Key & Organization updated`, toastOption)
+  const toastOption = {
+    autoClose: 4000,
+    hideProgressBar: false,
+    position: toast.POSITION.BOTTOM_CENTER,
+    pauseOnHover: true,
+  }
+
+  const handleSave = async (newApiKey, newOrganization) => {
+    await saveGithubCredentials(`${BACKEND_URL}/github/save-credentials`, newApiKey, newOrganization)
+      .then(() => {
+        toast.success("Github credentials saved successfully", toastOption)
+      })
+      .catch((err) => {
+        console.error(err)
+        toast.error(
+          "Failed to save Github credentials. Contact us at peter@withdeck.com and we'll resolve this issue as soon as possible",
+          toastOption
+        )
+      })
   }
 
   return (
@@ -45,12 +54,12 @@ export default function Application({ BACKEND_URL }) {
           </label>
         </li>
       </ul>
-      <AppSettings header="Github App Setting" label="github-modal" github={github} fireAlert={fireAlert} />
+      <AppSettings header="Github App Setting" label="github-modal" github={github} handleSave={handleSave} />
     </div>
   )
 }
 
-function AppSettings({ header, label, github, fireAlert }) {
+function AppSettings({ header, label, github, handleSave }) {
   const { apiKey, organization } = github
   const modalOpenCheckbox = useRef(null)
 
@@ -67,11 +76,12 @@ function AppSettings({ header, label, github, fireAlert }) {
 
             return errors
           }}
-          onSubmit={(values, { setSubmitting }) => {
+          onSubmit={async (values, { setSubmitting }) => {
             // update the new Github API Key & Organization to the database
+            // then later refetch the list of teams & members from Github to Deck's database
+            await handleSave(values.tempApiKey, values.tempOrg)
             setSubmitting(false)
             modalOpenCheckbox.current.checked = false
-            fireAlert()
           }}
         >
           {({ isSubmitting }) => (
