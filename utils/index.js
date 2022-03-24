@@ -145,16 +145,17 @@ export function useAdminData(url = "") {
 export async function saveGithubCredentials(url = "", apiKey = "", organization = "") {
   const accessToken = await getAccessToken()
   const result = await axios
-    .post(
-      url,
-      { apiKey, organization },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    )
+    .post(url, { apiKey, organization }, { headers: { Authorization: `Bearer ${accessToken}` } })
     .then((res) => res.data)
+
+  if (!result?.ok) throw new Error(result?.message)
+
+  return result
+}
+
+export async function importNewData(url = "") {
+  const accessToken = await getAccessToken()
+  const result = await axios.put(url, {}, { headers: { Authorization: `Bearer ${accessToken}` } }).then((res) => res.data)
 
   if (!result?.ok) throw new Error(result?.message)
 

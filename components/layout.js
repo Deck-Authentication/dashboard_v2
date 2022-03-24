@@ -6,11 +6,14 @@ import { ToastContainer } from "react-toastify"
 
 function Layout(props) {
   return (
-    <div className="flex flex-row min-h-screen min-w-screen text-black" style={{ backgroundColor: "rgb(241, 245, 249)" }}>
+    <div
+      className="flex flex-row min-h-screen min-w-screen text-black relative"
+      style={{ backgroundColor: "rgb(241, 245, 249)" }}
+    >
       <Menu />
-      <div className="w-full h-screen flex flex-col">
+      <div className="grow h-screen flex flex-col">
         <Header />
-        <section className="w-full flex-auto">{props.children}</section>
+        <section className="w-full">{props.children}</section>
         {/* One single toast container for the whole project to avoid conflicts */}
         <ToastContainer />
       </div>

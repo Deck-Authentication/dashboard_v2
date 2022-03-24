@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export default function Menu() {
   return (
-    <aside className="min-h-full bg-zinc-800 text-white py-5 px-3" style={{ width: "300px" }}>
+    <aside className="min-h-full bg-zinc-800 text-white py-5 px-3" style={{ minWidth: "260px" }}>
       <Link href="/team" passHref={true}>
         <a>
           <h1 className="text-indigo-400 text-4xl px-3 mb-3 font-bold">Deck</h1>

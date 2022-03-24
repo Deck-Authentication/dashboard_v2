@@ -6,12 +6,12 @@ export default function Team({ BACKEND_URL }) {
   if (error) return <div>failed to load</div>
   if (!data) return <div>loading...</div>
 
-  const { teams, members } = data
+  const { teams } = data
 
   return (
-    <div>
-      {teams?.length > 0 ? (
-        teams.map()
+    <div className="team w-full">
+      {teams.length && teams.length > 0 ? (
+        <div>{JSON.stringify(teams)}</div>
       ) : (
         <div>No teams found. Start adding team by importing from Github or input them manually.</div>
       )}

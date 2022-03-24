@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCog, faTimes, faArrowRight } from "@fortawesome/free-solid-svg-icons"
 import Github_Mark from "../assets/Github_Mark.png"
 import Image from "next/image"
-import { useAdminData, saveGithubCredentials } from "../utils"
+import { useAdminData, saveGithubCredentials, importNewData } from "../utils"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import { useRef } from "react"
 import { toast } from "react-toastify"
@@ -24,8 +24,14 @@ export default function Application({ BACKEND_URL }) {
   }
 
   const handleSave = async (newApiKey, newOrganization) => {
-    await saveGithubCredentials(`${BACKEND_URL}/github/save-credentials`, newApiKey, newOrganization)
-      .then(() => {
+    // Only fetch new data as members and teams from github if the organization field has changed
+    const shouldGithubDataUpdate = newOrganization !== github.organization
+    await Promise.all([saveGithubCredentials(`${BACKEND_URL}/github/save-credentials`, newApiKey, newOrganization)])
+      .then(async () => {
+        if (shouldGithubDataUpdate)
+          await importNewData(`${BACKEND_URL}/github/import-all`).catch((err) => {
+            throw new Error(err)
+          })
         toast.success("Github credentials saved successfully", toastOption)
       })
       .catch((err) => {
