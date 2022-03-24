@@ -8,8 +8,10 @@ export default function User({ BACKEND_URL }) {
 
   const { members } = data
 
+  if (!members || members.length === 0) return <div className="member">No members found</div>
+
   return (
-    <div>
+    <div className="member">
       <table className="table w-full table-zebra" data-theme="light">
         <thead>
           <tr className="hover:mix-blend-multiply cursor-pointer">
@@ -20,14 +22,17 @@ export default function User({ BACKEND_URL }) {
           </tr>
         </thead>
         <tbody>
-          {members.map((member, key) => (
-            <tr className="hover:mix-blend-multiply cursor-pointer" key={`${member.id}_${key}`}>
-              <th>{key + 1}</th>
-              <td>{member.login}</td>
-              <td>{member.html_url}</td>
-              <td></td>
-            </tr>
-          ))}
+          {Object.keys(members).map((memberId, key) => {
+            const member = members[memberId]
+            return (
+              <tr className="hover:mix-blend-multiply cursor-pointer" key={`${memberId}_${key}`}>
+                <th>{key + 1}</th>
+                <td>{member.login}</td>
+                <td>{member.html_url}</td>
+                <td></td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>
