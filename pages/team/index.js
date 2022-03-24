@@ -1,5 +1,6 @@
 import { useAdminData, useGithubTeamRepos } from "../../utils"
 import Link from "next/Link"
+import lodash from "lodash"
 
 export default function Team({ BACKEND_URL }) {
   const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
@@ -9,17 +10,17 @@ export default function Team({ BACKEND_URL }) {
 
   const { teams } = data
 
+  if (!teams || !lodash.isObject(teams) || Object.keys(teams).length === 0)
+    return <div className="w-full">No teams found. Start adding team by importing from Github or input them manually.</div>
+
   return (
     <div className="team w-full flex justify-center items-center">
-      {teams.length && teams.length > 0 ? (
-        <div className="mt-5 flex flex-row sm:justify-center xs:justify-center flex-wrap gap-4">
-          {teams.map((team, id) => (
-            <TeamCard team={team} cardKey={id} key={id} BACKEND_URL={BACKEND_URL} />
-          ))}
-        </div>
-      ) : (
-        <div>No teams found. Start adding team by importing from Github or input them manually.</div>
-      )}
+      <div className="mt-5 flex flex-row sm:justify-center xs:justify-center flex-wrap gap-4">
+        {Object.keys(teams).map((teamId, loopId) => {
+          const team = teams[teamId]
+          return <TeamCard key={loopId} team={team} cardKey={loopId} BACKEND_URL={BACKEND_URL} />
+        })}
+      </div>
     </div>
   )
 }
