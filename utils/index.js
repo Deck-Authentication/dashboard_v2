@@ -161,3 +161,11 @@ export async function importNewData(url = "") {
 
   return result
 }
+
+export function useGithubTeamRepos(url = "") {
+  const fetcher = async (url) => {
+    const accessToken = await getAccessToken()
+    return await axios.get(`${url}`, { headers: { Authorization: `Bearer ${accessToken}` } }).then((res) => res.data.repos)
+  }
+  return useSWR(url, fetcher)
+}
