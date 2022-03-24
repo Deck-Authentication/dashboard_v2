@@ -12,7 +12,7 @@ export default function Team({ BACKEND_URL }) {
   return (
     <div className="team w-full flex justify-center items-center">
       {teams.length && teams.length > 0 ? (
-        <div className="mt-5 flex flex-row justify-center flex-wrap gap-4">
+        <div className="mt-5 flex flex-row sm:justify-center xs:justify-center flex-wrap gap-4">
           {teams.map((team, id) => (
             <TeamCard team={team} cardKey={id} key={id} BACKEND_URL={BACKEND_URL} />
           ))}
