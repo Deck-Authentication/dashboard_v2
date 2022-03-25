@@ -1,6 +1,4 @@
 import Link from "next/link"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faHistory } from "@fortawesome/free-solid-svg-icons"
 
 export default function Menu() {
   return (
