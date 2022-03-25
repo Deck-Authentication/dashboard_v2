@@ -53,6 +53,29 @@ export default function Menu() {
           </Link>
         </li>
         <li>
+          <Link href="/activity" passHref={true}>
+            <a className="flex flex-row my-px p-3 rounded-lg hover:bg-slate-700">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 p-0.5 mr-0.5 rounded"
+                fill="linear-gradient(to right, #b2fefa, #0ed2f7)"
+                viewBox="0 0 20 20"
+                stroke="currentColor"
+                style={{
+                  background: "linear-gradient(to right, #74ebd5, #acb6e5)",
+                }}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
+                />
+              </svg>
+              Activity
+            </a>
+          </Link>
+        </li>
+        <li>
           <Link href="/application" passHref={true}>
             <a className="flex flex-row my-px p-3 rounded-lg hover:bg-slate-700">
               <svg
