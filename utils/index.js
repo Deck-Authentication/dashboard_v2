@@ -167,5 +167,26 @@ export function useGithubTeamRepos(url = "") {
     const accessToken = await getAccessToken()
     return await axios.get(`${url}`, { headers: { Authorization: `Bearer ${accessToken}` } }).then((res) => res.data.repos)
   }
-  return useSWR(url, fetcher)
+  const { data, error } = useSWR(url, fetcher)
+
+  return {
+    repos: data,
+    loadReposError: error,
+  }
+}
+
+export function useGithubTeamMembers(url = "") {
+  const fetcher = async (url) => {
+    const accessToken = await getAccessToken()
+    return await axios.get(`${url}`, { headers: { Authorization: `Bearer ${accessToken}` } }).then((res) => {
+      if (!res.data.ok) throw new Error(res.data.message)
+      return res.data.members
+    })
+  }
+  const { data, error } = useSWR(url, fetcher)
+
+  return {
+    members: data,
+    loadMembersError: error,
+  }
 }
