@@ -1,5 +1,5 @@
 import { useAdminData, useGithubTeamRepos, useGithubTeamMembers } from "../../utils"
-import Link from "next/Link"
+import Link from "next/link"
 import lodash from "lodash"
 import { withRouter } from "next/router"
 
