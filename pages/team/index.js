@@ -6,7 +6,7 @@ export default function Team({ BACKEND_URL }) {
   const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
 
   if (error) return <div>{JSON.stringify(error)}</div>
-  if (!data) return <div>loading...</div>
+  if (!data) return <div>Loading...</div>
 
   const { teams } = data
 
@@ -14,7 +14,8 @@ export default function Team({ BACKEND_URL }) {
     return <div className="w-full">No teams found. Start adding team by importing from Github or input them manually.</div>
 
   return (
-    <div className="team w-full flex justify-center items-center">
+    <div className="team w-full flex flex-col justify-center items-center p-5">
+      <CreateTeamBtn />
       <div className="mt-5 flex flex-row sm:justify-center xs:justify-center flex-wrap gap-4">
         {Object.keys(teams).map((teamId, loopId) => {
           const team = teams[teamId]
@@ -57,6 +58,55 @@ function TeamCard({ team, cardKey, BACKEND_URL }) {
         </div>
       </a>
     </Link>
+  )
+}
+
+function CreateTeamBtn({ isCreating }) {
+  return (
+    <div className="create-team-btn w-full flex px-8">
+      <label
+        htmlFor="add-template-modal"
+        className="modal-button btn btn-primary btn-sm cursor-pointer normal-case p-1 hover:opacity-90"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Create Team
+      </label>
+      <input type="checkbox" id="add-template-modal" className="modal-toggle" />
+      <div className="modal">
+        <div className="modal-box bg-white p-10">
+          <input
+            type="text"
+            placeholder="Team Name"
+            className="text-xl w-full rounded-2xl p-2 border border-blue-300"
+            // value={newTemplateName}
+            // onChange={(event) => setNewTemplateName(event.target.value)}
+          />
+          <div className="modal-action">
+            <label
+              htmlFor="add-template-modal"
+              className={`btn btn-primary ${isCreating ? "loading" : ""}`}
+              onClick={async (event) => {
+                event.preventDefault()
+                // setCreateButtonLoading(true)
+                // await createTemplate(newTemplateName)
+                // setCreateButtonLoading(false)
+              }}
+            >
+              Create
+            </label>
+            <label htmlFor="add-template-modal" className="btn">
+              Cancel
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
