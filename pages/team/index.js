@@ -15,7 +15,7 @@ function Teams({ BACKEND_URL, router }) {
     return <div className="w-full">No teams found. Start adding team by importing from Github or input them manually.</div>
 
   return (
-    <div className="team w-full flex flex-col justify-center items-center p-5">
+    <div className="teams w-full h-full flex flex-col items-center p-5">
       <CreateTeamBtn />
       <div className="mt-5 flex w-full justify-start items-start flex-wrap gap-8">
         {Object.keys(teams).map((teamId, loopId) => {
@@ -26,7 +26,7 @@ function Teams({ BACKEND_URL, router }) {
               team={team}
               cardKey={loopId}
               BACKEND_URL={BACKEND_URL}
-              href={`${router.pathname}/${teamId}`}
+              href={`${router.pathname}/${team.slug}`}
             />
           )
         })}
@@ -36,7 +36,7 @@ function Teams({ BACKEND_URL, router }) {
 }
 
 function TeamCard({ team, cardKey, BACKEND_URL, href }) {
-  const { name, slug, id } = team
+  const { name, slug } = team
   const borderTopColors = [
     "border-t-blue-300",
     "border-t-red-300",
