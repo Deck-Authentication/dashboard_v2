@@ -1,4 +1,4 @@
-import { useAdminData, useGithubTeamRepos } from "../../utils"
+import { useAdminData, useGithubTeamRepos, useGithubTeamMembers } from "../../utils"
 import Link from "next/Link"
 import lodash from "lodash"
 
@@ -38,17 +38,22 @@ function TeamCard({ team, cardKey, BACKEND_URL }) {
   const cardBorderTopColor = borderTopColors[cardKey % 6]
   const TeamCardStyles = `defined-card relative w-1/5 min-w-max h-36 mt-2 mr-2 bg-white cursor-pointer hover:shadow-lg border-gray-100 border-t-8 ${cardBorderTopColor}`
 
-  const { data, error } = useGithubTeamRepos(`${BACKEND_URL}/github/team/list-repos?teamSlug=${slug}`)
+  const { repos, loadReposError } = useGithubTeamRepos(`${BACKEND_URL}/github/team/list-repos?teamSlug=${slug}`)
+  const { members, loadMembersError } = useGithubTeamMembers(`${BACKEND_URL}/github/team/list-members?teamSlug=${slug}`)
 
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
+  if (loadReposError) return <div>Failed to load repos</div>
+  if (!repos) return <div>Loading...</div>
+
+  if (loadMembersError) return <div>Failed to load team members</div>
+  if (!members) return <div>Loading...</div>
 
   return (
-    <Link href={`#`} key={cardKey} passHref>
+    <Link href={`#`} key={cardKey}>
       <a className={TeamCardStyles}>
         <div className="card-body">
           <h2 className="card-title w-full">{name}</h2>
-          <div>Number of repositories: {data ? data.length : 0}</div>
+          <div>Number of repositories: {repos ? repos.length : 0}</div>
+          <div>Number of members: {members ? members.length : 0}</div>
         </div>
       </a>
     </Link>
