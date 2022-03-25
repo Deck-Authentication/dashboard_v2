@@ -16,7 +16,7 @@ export default function Team({ BACKEND_URL }) {
   return (
     <div className="team w-full flex flex-col justify-center items-center p-5">
       <CreateTeamBtn />
-      <div className="mt-5 flex flex-row sm:justify-center xs:justify-center flex-wrap gap-4">
+      <div className="mt-5 flex w-full justify-start items-start flex-wrap gap-8">
         {Object.keys(teams).map((teamId, loopId) => {
           const team = teams[teamId]
           return <TeamCard key={loopId} team={team} cardKey={loopId} BACKEND_URL={BACKEND_URL} />
@@ -63,7 +63,7 @@ function TeamCard({ team, cardKey, BACKEND_URL }) {
 
 function CreateTeamBtn({ isCreating }) {
   return (
-    <div className="create-team-btn w-full flex px-8">
+    <div className="create-team-btn w-full flex">
       <label
         htmlFor="add-template-modal"
         className="modal-button btn btn-primary btn-sm cursor-pointer normal-case p-1 hover:opacity-90"
