@@ -1,8 +1,9 @@
 import { useAdminData, useGithubTeamRepos, useGithubTeamMembers } from "../../utils"
 import Link from "next/Link"
 import lodash from "lodash"
+import { withRouter } from "next/router"
 
-export default function Team({ BACKEND_URL }) {
+function Teams({ BACKEND_URL, router }) {
   const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
 
   if (error) return <div>{JSON.stringify(error)}</div>
@@ -14,19 +15,27 @@ export default function Team({ BACKEND_URL }) {
     return <div className="w-full">No teams found. Start adding team by importing from Github or input them manually.</div>
 
   return (
-    <div className="team w-full flex flex-col justify-center items-center p-5">
+    <div className="teams w-full h-full flex flex-col items-center p-5">
       <CreateTeamBtn />
       <div className="mt-5 flex w-full justify-start items-start flex-wrap gap-8">
         {Object.keys(teams).map((teamId, loopId) => {
           const team = teams[teamId]
-          return <TeamCard key={loopId} team={team} cardKey={loopId} BACKEND_URL={BACKEND_URL} />
+          return (
+            <TeamCard
+              key={loopId}
+              team={team}
+              cardKey={loopId}
+              BACKEND_URL={BACKEND_URL}
+              href={`${router.pathname}/${team.slug}`}
+            />
+          )
         })}
       </div>
     </div>
   )
 }
 
-function TeamCard({ team, cardKey, BACKEND_URL }) {
+function TeamCard({ team, cardKey, BACKEND_URL, href }) {
   const { name, slug } = team
   const borderTopColors = [
     "border-t-blue-300",
@@ -49,7 +58,7 @@ function TeamCard({ team, cardKey, BACKEND_URL }) {
   if (!members) return <div>Loading...</div>
 
   return (
-    <Link href={`#`} key={cardKey}>
+    <Link href={href} key={cardKey}>
       <a className={TeamCardStyles}>
         <div className="card-body">
           <h2 className="card-title w-full">{name}</h2>
@@ -117,3 +126,5 @@ export async function getStaticProps() {
     props: { BACKEND_URL },
   }
 }
+
+export default withRouter(Teams)

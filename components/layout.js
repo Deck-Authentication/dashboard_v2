@@ -13,7 +13,7 @@ function Layout(props) {
       <Menu />
       <div className="grow h-screen flex flex-col">
         <Header />
-        <section className="w-full">{props.children}</section>
+        <section className="w-full h-full overflow-y-scroll">{props.children}</section>
         {/* One single toast container for the whole project to avoid conflicts */}
         <ToastContainer />
       </div>

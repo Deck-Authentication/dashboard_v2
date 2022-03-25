@@ -33,3 +33,12 @@
 .btn-disabled {
   @apply text-white cursor-not-allowed;
 }
+
+.tab {
+  @apply text-2xl text-gray-600;
+}
+
+.tab-active {
+  border-color: green !important;
+  color: green;
+}
