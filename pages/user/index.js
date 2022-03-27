@@ -1,12 +1,10 @@
-import { useAdminData } from "../../utils"
+import { useGithubOrgMembers } from "../../utils"
 
 export default function User({ BACKEND_URL }) {
-  const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
+  const { members, isMembersLoadingFailed } = useGithubOrgMembers(`${BACKEND_URL}/github/list-members`)
 
-  if (error) return <div>{JSON.stringify(error)}</div>
-  if (!data) return <div>loading...</div>
-
-  const { members } = data
+  if (isMembersLoadingFailed) return <div>{JSON.stringify(error)}</div>
+  if (!members) return <div>loading...</div>
 
   if (!members || members.length === 0) return <div className="member">No members found</div>
 

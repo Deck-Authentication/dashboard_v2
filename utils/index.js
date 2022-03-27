@@ -112,8 +112,9 @@ export function useAtlassianGroups(url = "") {
   }
 }
 
-export function useUsers(url = "") {
-  const fetchUers = async (_url) => {
+// list all members within a github organization
+export function useGithubOrgMembers(url = "") {
+  const fetchMembers = async (_url) => {
     const accessToken = await getAccessToken()
     return await axios
       .get(_url, {
@@ -121,15 +122,14 @@ export function useUsers(url = "") {
           Authorization: `Bearer ${accessToken}`,
         },
       })
-      .then((res) => res.data.users)
+      .then((res) => res.data.members)
   }
 
-  const { data, error } = useSWR(url, fetchUers)
+  const { data, error } = useSWR(url, fetchMembers)
 
   return {
-    users: data,
-    areUsersBeingLoaded: !data,
-    isUsersLoadingFailed: error,
+    members: data,
+    isMembersLoadingFailed: error,
   }
 }
 
