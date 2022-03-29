@@ -1,10 +1,22 @@
-import { useGithubTeamRepos, useGithubTeamMembers, useGithubTeams } from "../../utils"
+import { useGithubTeamRepos, useGithubTeamMembers, useGithubTeams, createNewTeam } from "../../utils"
 import Link from "next/link"
-import { withRouter } from "next/router"
+import { useRouter } from "next/router"
 import lodash from "lodash"
+import { useState } from "react"
 
-function Teams({ BACKEND_URL, router }) {
+export default function Teams({ BACKEND_URL }) {
   const { teams, teamsLoadError } = useGithubTeams(`${BACKEND_URL}/github/team/list-all`)
+  const [isCreatingTeam, setIsCreatingTeam] = useState(false)
+  const router = useRouter()
+
+  const handleCreateTeam = async (newTeamName) => {
+    // disable the create team button while creating team
+    setIsCreatingTeam(true)
+    const newTeam = await createNewTeam(`${BACKEND_URL}/github/team/create`, newTeamName)
+    setIsCreatingTeam(false)
+    // redirect users to the new team page
+    router.push(`${router.asPath}/${newTeam.slug}`)
+  }
 
   if (teamsLoadError) {
     console.log(teamsLoadError)
@@ -13,17 +25,16 @@ function Teams({ BACKEND_URL, router }) {
 
   return (
     <div className="teams w-full h-full flex flex-col items-center p-5">
-      <CreateTeamBtn />
+      <CreateTeamBtn isCreating={isCreatingTeam} handleCreateTeam={handleCreateTeam} />
       {lodash.isArray(teams) && teams.length > 0 ? (
         <div className="mt-5 flex w-full justify-start items-start flex-wrap gap-8">
           {teams.map((team, loopId) => (
-            // eslint-disable-next-line react/jsx-key
             <TeamCard
               cardKey={loopId}
               key={`${team.id}-${loopId}`}
               team={team}
               BACKEND_URL={BACKEND_URL}
-              href={`${router.pathname}/${team.slug}`}
+              href={`${router.asPath}/${team.slug}`}
             />
           ))}
         </div>
@@ -69,7 +80,9 @@ function TeamCard({ team, cardKey, BACKEND_URL, href }) {
   )
 }
 
-function CreateTeamBtn({ isCreating }) {
+function CreateTeamBtn({ isCreating, handleCreateTeam }) {
+  const [teamName, setTeamName] = useState("")
+
   return (
     <div className="create-team-btn w-full flex">
       <label
@@ -92,8 +105,8 @@ function CreateTeamBtn({ isCreating }) {
             type="text"
             placeholder="Team Name"
             className="text-xl w-full rounded-2xl p-2 border border-blue-300"
-            // value={newTemplateName}
-            // onChange={(event) => setNewTemplateName(event.target.value)}
+            value={teamName}
+            onChange={(event) => setTeamName(event.target.value)}
           />
           <div className="modal-action">
             <label
@@ -101,9 +114,7 @@ function CreateTeamBtn({ isCreating }) {
               className={`btn btn-primary ${isCreating ? "loading" : ""}`}
               onClick={async (event) => {
                 event.preventDefault()
-                // setCreateButtonLoading(true)
-                // await createTemplate(newTemplateName)
-                // setCreateButtonLoading(false)
+                handleCreateTeam(teamName)
               }}
             >
               Create
@@ -125,5 +136,3 @@ export async function getStaticProps() {
     props: { BACKEND_URL },
   }
 }
-
-export default withRouter(Teams)

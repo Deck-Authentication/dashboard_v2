@@ -126,3 +126,13 @@ export function useGithubOrgActivities(url = "") {
     loadActivitiesError: error,
   }
 }
+
+export async function createNewTeam(url = "", team) {
+  const accessToken = await getAccessToken()
+  const result = await axios
+    .post(url, { team }, { headers: { Authorization: `Bearer ${accessToken}` } })
+    .then((res) => res.data)
+
+  if (!result?.ok) throw new Error(result?.error)
+  return result.team
+}
