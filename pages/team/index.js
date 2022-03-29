@@ -1,13 +1,19 @@
-import { useGithubTeamRepos, useGithubTeamMembers, useGithubTeams, createNewTeam } from "../../utils"
-import Link from "next/link"
+import { useGithubTeams, createNewTeam, deleteTeam } from "../../utils"
+import { TeamCard, CreateTeamBtn } from "../../components/team"
 import { useRouter } from "next/router"
 import lodash from "lodash"
-import { useState } from "react"
+import { useState, useRef } from "react"
+import { toast } from "react-toastify"
+import { toastOption } from "../../constants"
+import { useSWRConfig } from "swr"
 
 export default function Teams({ BACKEND_URL }) {
   const { teams, teamsLoadError } = useGithubTeams(`${BACKEND_URL}/github/team/list-all`)
   const [isCreatingTeam, setIsCreatingTeam] = useState(false)
+  const [isDeletingTeam, setIsDeletingTeam] = useState(false)
+  const { mutate } = useSWRConfig()
   const router = useRouter()
+  const modalDeleteCheckbox = useRef(null)
 
   const handleCreateTeam = async (newTeamName) => {
     // disable the create team button while creating team
@@ -16,6 +22,15 @@ export default function Teams({ BACKEND_URL }) {
     setIsCreatingTeam(false)
     // redirect users to the new team page
     router.push(`${router.asPath}/${newTeam.slug}`)
+  }
+
+  const handleDeleteTeam = async (team) => {
+    setIsDeletingTeam(true)
+    await deleteTeam(`${BACKEND_URL}/github/team/delete`, team.slug)
+    // refetch the updated list of teams
+    mutate(`${BACKEND_URL}/github/team/list-all`)
+    setIsDeletingTeam(false)
+    toast.success(`Team ${team.name} deleted successfully`, toastOption)
   }
 
   if (teamsLoadError) {
@@ -35,96 +50,33 @@ export default function Teams({ BACKEND_URL }) {
               team={team}
               BACKEND_URL={BACKEND_URL}
               href={`${router.asPath}/${team.slug}`}
+              handleDeleteTeam={handleDeleteTeam}
             />
           ))}
+          <input type="checkbox" id="delete-card-checkbox" className="modal-toggle" ref={modalDeleteCheckbox} />
+          <div className="modal">
+            <div className="modal-box bg-white p-10">
+              <input type="text" placeholder="Team Name" className="text-xl w-full rounded-2xl p-2 border border-blue-300" />
+              <div className="modal-action">
+                <label
+                  htmlFor="delete-card-checkbox"
+                  className={`btn btn-primary`}
+                  onClick={async (event) => {
+                    event.preventDefault()
+                  }}
+                >
+                  Create
+                </label>
+                <label htmlFor="delete-card-checkbox" className="btn">
+                  Cancel
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
       ) : (
         <div>No team found</div>
       )}
-    </div>
-  )
-}
-
-function TeamCard({ team, cardKey, BACKEND_URL, href }) {
-  const { name, slug } = team
-  const borderTopColors = [
-    "border-t-blue-300",
-    "border-t-red-300",
-    "border-t-green-300",
-    "border-t-purple-300",
-    "border-t-orange-300",
-    "border-t-yellow-300",
-  ]
-  const cardBorderTopColor = borderTopColors[cardKey % 6]
-  const TeamCardStyles = `defined-card relative w-1/5 min-w-max h-36 mt-2 mr-2 bg-white cursor-pointer hover:shadow-lg border-gray-100 border-t-8 ${cardBorderTopColor}`
-
-  const { repos, loadReposError } = useGithubTeamRepos(`${BACKEND_URL}/github/team/list-repos?teamSlug=${slug}`)
-  const { members, loadMembersError } = useGithubTeamMembers(`${BACKEND_URL}/github/team/list-members?teamSlug=${slug}`)
-
-  if (loadReposError) return <div>Failed to load repos</div>
-  if (!repos) return <div>Loading...</div>
-
-  if (loadMembersError) return <div>Failed to load team members</div>
-  if (!members) return <div>Loading...</div>
-
-  return (
-    <Link href={href} key={cardKey}>
-      <a className={TeamCardStyles}>
-        <div className="card-body">
-          <h2 className="card-title w-full">{name}</h2>
-          <div>Number of repositories: {repos ? repos.length : 0}</div>
-          <div>Number of members: {members ? members.length : 0}</div>
-        </div>
-      </a>
-    </Link>
-  )
-}
-
-function CreateTeamBtn({ isCreating, handleCreateTeam }) {
-  const [teamName, setTeamName] = useState("")
-
-  return (
-    <div className="create-team-btn w-full flex">
-      <label
-        htmlFor="add-template-modal"
-        className="modal-button btn btn-primary btn-sm cursor-pointer normal-case p-1 hover:opacity-90"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-          <path
-            fillRule="evenodd"
-            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-            clipRule="evenodd"
-          />
-        </svg>
-        Create Team
-      </label>
-      <input type="checkbox" id="add-template-modal" className="modal-toggle" />
-      <div className="modal">
-        <div className="modal-box bg-white p-10">
-          <input
-            type="text"
-            placeholder="Team Name"
-            className="text-xl w-full rounded-2xl p-2 border border-blue-300"
-            value={teamName}
-            onChange={(event) => setTeamName(event.target.value)}
-          />
-          <div className="modal-action">
-            <label
-              htmlFor="add-template-modal"
-              className={`btn btn-primary ${isCreating ? "loading" : ""}`}
-              onClick={async (event) => {
-                event.preventDefault()
-                handleCreateTeam(teamName)
-              }}
-            >
-              Create
-            </label>
-            <label htmlFor="add-template-modal" className="btn">
-              Cancel
-            </label>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

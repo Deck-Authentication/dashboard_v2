@@ -1,3 +1,5 @@
+import { toast } from "react-toastify"
+
 export const URL = (BACKEND_URL) => ({
   // Templates
   GET_TEMPLATE_BY_ID: `${BACKEND_URL}/template/get-template-by-id`,
@@ -23,3 +25,10 @@ export const URL = (BACKEND_URL) => ({
   REMOVE_FROM_ATLASSIAN_GROUPS: `${BACKEND_URL}/atlassian/jira/remove-from-team`,
   INVITE_TO_ATLASSIAN_GROUPS: `${BACKEND_URL}/atlassian/jira/invite-to-team`,
 })
+
+export const toastOption = {
+  autoClose: 4000,
+  hideProgressBar: false,
+  position: toast.POSITION.BOTTOM_CENTER,
+  pauseOnHover: true,
+}
