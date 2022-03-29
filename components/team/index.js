@@ -1,11 +1,9 @@
 import Link from "next/link"
-import { Popover } from "@headlessui/react"
+import { XCircleIcon } from "@heroicons/react/solid"
 import { useState } from "react"
 import { useGithubTeamRepos, useGithubTeamMembers } from "../../utils"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faEllipsisH } from "@fortawesome/free-solid-svg-icons"
 
-export function TeamCard({ team, cardKey, BACKEND_URL, href }) {
+export function TeamCard({ team, cardKey, BACKEND_URL, href, handleDeleteTeam }) {
   const { name, slug } = team
   const borderTopColors = [
     "border-t-blue-300",
@@ -28,11 +26,19 @@ export function TeamCard({ team, cardKey, BACKEND_URL, href }) {
   return (
     <Link href={href} key={cardKey} passHref>
       <a className={TeamCardStyles}>
+        <XCircleIcon
+          className="absolute z-10 h-6 w-6 top-0 right-0 hover:text-red-600"
+          onClick={(event) => {
+            event.preventDefault()
+            handleDeleteTeam(team)
+          }}
+        />
         <div className="card-body">
-          <h2 className="card-title w-full">{name}</h2>
+          <div className="card-title w-full flex justify-between">
+            <h2>{name}</h2>
+          </div>
           <div>Number of repositories: {repos ? repos.length : 0}</div>
           <div>Number of members: {members ? members.length : 0}</div>
-          <Popover className="relative"></Popover>
         </div>
       </a>
     </Link>

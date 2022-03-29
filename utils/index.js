@@ -136,3 +136,13 @@ export async function createNewTeam(url = "", team) {
   if (!result?.ok) throw new Error(result?.error)
   return result.team
 }
+
+export async function deleteTeam(url = "", team) {
+  const accessToken = await getAccessToken()
+  const result = await axios
+    .delete(url, { data: { teamSlug: team }, headers: { Authorization: `Bearer ${accessToken}` } })
+    .then((res) => res.data)
+
+  if (!result?.ok) throw new Error(result?.error)
+  return result
+}

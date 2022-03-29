@@ -7,6 +7,7 @@ import { useAdminData, saveGithubCredentials, importNewData } from "../utils"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import { useRef } from "react"
 import { toast } from "react-toastify"
+import { toastOption } from "../constants"
 
 export default function Application({ BACKEND_URL }) {
   const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
@@ -15,13 +16,6 @@ export default function Application({ BACKEND_URL }) {
   if (!data) return <div>loading...</div>
 
   const { github } = data
-
-  const toastOption = {
-    autoClose: 4000,
-    hideProgressBar: false,
-    position: toast.POSITION.BOTTOM_CENTER,
-    pauseOnHover: true,
-  }
 
   const handleSave = async (newApiKey, newOrganization) => {
     // Only fetch new data as members and teams from github if the organization field has changed
