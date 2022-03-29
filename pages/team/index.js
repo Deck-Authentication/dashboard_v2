@@ -1,36 +1,35 @@
-import { useAdminData, useGithubTeamRepos, useGithubTeamMembers } from "../../utils"
+import { useGithubTeamRepos, useGithubTeamMembers, useGithubTeams } from "../../utils"
 import Link from "next/link"
-import lodash from "lodash"
 import { withRouter } from "next/router"
+import lodash from "lodash"
 
 function Teams({ BACKEND_URL, router }) {
-  const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
+  const { teams, teamsLoadError } = useGithubTeams(`${BACKEND_URL}/github/team/list-all`)
 
-  if (error) return <div>{JSON.stringify(error)}</div>
-  if (!data) return <div>Loading...</div>
-
-  const { teams } = data
-
-  if (!teams || !lodash.isObject(teams) || Object.keys(teams).length === 0)
-    return <div className="w-full">No teams found. Start adding team by importing from Github or input them manually.</div>
+  if (teamsLoadError) {
+    console.log(teamsLoadError)
+    return <div>Error: {JSON.stringify(teamsLoadError)}</div>
+  } else if (!teams) return <div>Loading...</div>
 
   return (
     <div className="teams w-full h-full flex flex-col items-center p-5">
       <CreateTeamBtn />
-      <div className="mt-5 flex w-full justify-start items-start flex-wrap gap-8">
-        {Object.keys(teams).map((teamId, loopId) => {
-          const team = teams[teamId]
-          return (
+      {lodash.isArray(teams) && teams.length > 0 ? (
+        <div className="mt-5 flex w-full justify-start items-start flex-wrap gap-8">
+          {teams.map((team, loopId) => (
+            // eslint-disable-next-line react/jsx-key
             <TeamCard
-              key={loopId}
-              team={team}
               cardKey={loopId}
+              key={`${team.id}-${loopId}`}
+              team={team}
               BACKEND_URL={BACKEND_URL}
               href={`${router.pathname}/${team.slug}`}
             />
-          )
-        })}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div>No team found</div>
+      )}
     </div>
   )
 }
