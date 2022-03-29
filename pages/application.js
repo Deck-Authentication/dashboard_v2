@@ -48,7 +48,7 @@ export default function Application({ BACKEND_URL }) {
       <ul className="w-10/12 w-md-full flex flex-col gap-y-4">
         <li className="w-full border rounded-sm border-gray-300 p-3 flex flex-row justify-between items-center">
           <div className="flex flex-row items-center gap-1" title="github">
-            <Image src={Github_Mark} alt="Github logo" height="25" width="25" />
+            <Image src={Github_Mark} alt="Github logo" height="25" width="25" priority={true} />
             <p>Github</p>
           </div>
           <label
