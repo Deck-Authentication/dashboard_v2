@@ -5,11 +5,13 @@ import lodash from "lodash"
 import { useState, useRef } from "react"
 import { toast } from "react-toastify"
 import { toastOption } from "../../constants"
+import { useSWRConfig } from "swr"
 
 export default function Teams({ BACKEND_URL }) {
   const { teams, teamsLoadError } = useGithubTeams(`${BACKEND_URL}/github/team/list-all`)
   const [isCreatingTeam, setIsCreatingTeam] = useState(false)
   const [isDeletingTeam, setIsDeletingTeam] = useState(false)
+  const { mutate } = useSWRConfig()
   const router = useRouter()
   const modalDeleteCheckbox = useRef(null)
 
@@ -24,8 +26,9 @@ export default function Teams({ BACKEND_URL }) {
   const handleDeleteTeam = async (team) => {
     setIsDeletingTeam(true)
     await deleteTeam(`${BACKEND_URL}/github/team/delete`, team.slug)
+    // refetch the updated list of teams
+    mutate(`${BACKEND_URL}/github/team/list-all`)
     setIsDeletingTeam(false)
-    router.reload()
     toast.success(`Team ${team.name} deleted successfully`, toastOption)
   }
 
