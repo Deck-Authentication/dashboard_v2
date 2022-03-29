@@ -23,6 +23,7 @@ export default function Teams({ BACKEND_URL }) {
     // redirect users to the new team page
     router.push(`${router.asPath}/${newTeam.slug}`)
   }
+
   const handleDeleteTeam = async (team) => {
     setIsDeletingTeam(true)
     await deleteTeam(`${BACKEND_URL}/github/team/delete`, team.slug)
