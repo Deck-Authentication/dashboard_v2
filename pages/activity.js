@@ -7,9 +7,9 @@ export default function Activity({ BACKEND_URL }) {
   else if (!activities) return <div>Loading activities...</div>
 
   return (
-    <div className="activities p-5">
+    <div className="activities px-8">
       <div className="w-full border-b border-b-black my-8">
-        <h1 className="text-2xl font-bold">Activity</h1>
+        <h1 className="text-4xl font-bold">Activity</h1>
       </div>
       <ul>
         {activities.map((activity, loopId) => (
