@@ -152,7 +152,22 @@ export async function inviteMemberToTeam(url = "", teamSlug, memberAccount) {
   const result = await axios
     .post(url, { teamSlug, member: memberAccount }, { headers: { Authorization: `Bearer ${accessToken}` } })
     .then((res) => res.data)
+    .catch((err) => {
+      throw new Error(err)
+    })
 
   if (!result?.ok) throw new Error(result?.error)
   return result
+}
+
+export async function removeMemberFromTeam(url = "", teamSlug, memberAccount) {
+  const accessToken = await getAccessToken()
+  const result = await axios
+    .delete(url, { data: { teamSlug, member: memberAccount }, headers: { Authorization: `Bearer ${accessToken}` } })
+    .then((res) => res.data)
+    .catch((err) => {
+      throw new Error(err)
+    })
+
+  if (!result?.ok) throw new Error(result?.error)
 }
