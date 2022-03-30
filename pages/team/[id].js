@@ -1,6 +1,7 @@
 import { useGithubTeamRepos, useGithubTeamMembers } from "../../utils"
 import { useRouter } from "next/router"
 import { useState } from "react"
+import Image from "next/image"
 
 export default function Team({ id, BACKEND_URL }) {
   const teamSlug = id
@@ -60,10 +61,26 @@ function TeamRepos({ repos }) {
 
 function TeamMembers({ members }) {
   return (
-    <div>
-      {members.map((member, key) => (
-        <p key={key}>{member.login}</p>
-      ))}
+    <div className="flex flex-col gap-4">
+      <div className="w-full flex justify-end">
+        <button className="pill-btn bg-indigo-500">Add Members</button>
+      </div>
+      <div>
+        {members.map((member, key) => (
+          <div key={key} className="border border-black p-2">
+            <p className="flex flex-row items-center gap-2">
+              <Image
+                className="mask mask-circle ring ring-primary ring-blue-500 ring-offset-2"
+                src={member.avatar_url}
+                alt={`User ${member.login}`}
+                width={50}
+                height={50}
+              />
+              {member.login}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
