@@ -1,10 +1,12 @@
-import { useGithubTeamRepos, useGithubTeamMembers, inviteMemberToTeam } from "../../utils"
+import { useGithubTeamRepos, useGithubTeamMembers, inviteMemberToTeam, removeMemberFromTeam } from "../../utils"
 import { useRouter } from "next/router"
 import { useState } from "react"
 import Image from "next/image"
 import { toast } from "react-toastify"
 import { toastOption } from "../../constants"
 import { useSWRConfig } from "swr"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons"
 
 export default function Team({ id, BACKEND_URL }) {
   const teamSlug = id
@@ -71,17 +73,29 @@ function TeamMembers({ members, teamSlug, BACKEND_URL }) {
   const { mutate } = useSWRConfig()
 
   const handleMemberAdd = async (memberAccount) => {
-    // avoid invite empty-string members
+    // avoid inviting empty-string members
     if (!memberAccount) return
     setIsCreating(true)
     const response = await inviteMemberToTeam(`${BACKEND_URL}/github/team/invite-member`, teamSlug, memberAccount)
     if (response.ok) {
       // reload the cache after adding a new member
       mutate(`${BACKEND_URL}/github/team/list-members?teamSlug=${teamSlug}`)
-      mutate(`${BACKEND_URL}/github/list-members`)
       toast.success("Member added", toastOption)
-    } else toast.error("Error in adding the new member", toastOption)
+    } else toast.error(`Error in adding ${memberAccount}`, toastOption)
     setIsCreating(false)
+  }
+
+  const handleMemberRemove = async (memberAccount) => {
+    // avoid removing empty-string members
+    if (!memberAccount) return
+    try {
+      await removeMemberFromTeam(`${BACKEND_URL}/github/team/remove-member`, teamSlug, memberAccount)
+      // reload the cache after adding a new member
+      mutate(`${BACKEND_URL}/github/team/list-members?teamSlug=${teamSlug}`)
+      toast.success(`${memberAccount} is successfully removed from your team`, toastOption)
+    } catch (error) {
+      toast.error(`Error in removing ${memberAccount}`, toastOption)
+    }
   }
 
   return (
@@ -89,7 +103,7 @@ function TeamMembers({ members, teamSlug, BACKEND_URL }) {
       <AddMemberBtn isCreating={isCreating} handleMemberAdd={handleMemberAdd} />
       <div>
         {members.map((member, key) => (
-          <div key={key} className="border border-black p-2">
+          <div key={key} className="border border-black flex flex-row justify-between items-center py-2 px-4">
             <p className="flex flex-row items-center gap-2">
               <Image
                 className="mask mask-circle ring ring-primary ring-blue-500 ring-offset-2"
@@ -101,6 +115,13 @@ function TeamMembers({ members, teamSlug, BACKEND_URL }) {
               />
               {member.login}
             </p>
+            <FontAwesomeIcon
+              icon={faTrashAlt}
+              width="20"
+              height="20"
+              className="cursor-pointer hover:text-red-400"
+              onClick={(_) => handleMemberRemove(member.login)}
+            />
           </div>
         ))}
       </div>
