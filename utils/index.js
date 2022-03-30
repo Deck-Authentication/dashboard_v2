@@ -146,3 +146,13 @@ export async function deleteTeam(url = "", team) {
   if (!result?.ok) throw new Error(result?.error)
   return result
 }
+
+export async function inviteMemberToTeam(url = "", teamSlug, memberAccount) {
+  const accessToken = await getAccessToken()
+  const result = await axios
+    .post(url, { teamSlug, member: memberAccount }, { headers: { Authorization: `Bearer ${accessToken}` } })
+    .then((res) => res.data)
+
+  if (!result?.ok) throw new Error(result?.error)
+  return result
+}

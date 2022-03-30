@@ -1,7 +1,10 @@
-import { useGithubTeamRepos, useGithubTeamMembers } from "../../utils"
+import { useGithubTeamRepos, useGithubTeamMembers, inviteMemberToTeam } from "../../utils"
 import { useRouter } from "next/router"
 import { useState } from "react"
 import Image from "next/image"
+import { toast } from "react-toastify"
+import { toastOption } from "../../constants"
+import { useSWRConfig } from "swr"
 
 export default function Team({ id, BACKEND_URL }) {
   const teamSlug = id
@@ -33,7 +36,11 @@ export default function Team({ id, BACKEND_URL }) {
           </a>
         ))}
       </div>
-      {tab === "repositories" ? <TeamRepos repos={repos} /> : <TeamMembers members={members} />}
+      {tab === "repositories" ? (
+        <TeamRepos repos={repos} />
+      ) : (
+        <TeamMembers members={members} teamSlug={id} BACKEND_URL={BACKEND_URL} />
+      )}
     </div>
   )
 }
@@ -59,12 +66,26 @@ function TeamRepos({ repos }) {
   )
 }
 
-function TeamMembers({ members }) {
+function TeamMembers({ members, teamSlug, BACKEND_URL }) {
+  const [isCreating, setIsCreating] = useState(false)
+  const { mutate } = useSWRConfig()
+
+  const handleMemberAdd = async (memberAccount) => {
+    // avoid invite empty-string members
+    if (!memberAccount) return
+    setIsCreating(true)
+    const response = await inviteMemberToTeam(`${BACKEND_URL}/github/team/invite-member`, teamSlug, memberAccount)
+    if (response.ok) {
+      // reload the cache after adding a new member
+      mutate(`${BACKEND_URL}/github/team/list-members?teamSlug=${teamSlug}`)
+      toast.success("Member added", toastOption)
+    } else toast.error("Error in adding the new member", toastOption)
+    setIsCreating(false)
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full flex justify-end">
-        <button className="pill-btn bg-indigo-500">Add Members</button>
-      </div>
+      <AddMemberBtn isCreating={isCreating} handleMemberAdd={handleMemberAdd} />
       <div>
         {members.map((member, key) => (
           <div key={key} className="border border-black p-2">
@@ -75,11 +96,61 @@ function TeamMembers({ members }) {
                 alt={`User ${member.login}`}
                 width={50}
                 height={50}
+                priority={true}
               />
               {member.login}
             </p>
           </div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+function AddMemberBtn({ isCreating, handleMemberAdd }) {
+  const [memberAccount, setMemberAccount] = useState("")
+
+  return (
+    <div className="add-member-btn w-full flex justify-end">
+      <label
+        htmlFor="add-template-modal"
+        className="modal-button pill-btn btn-primary cursor-pointer normal-case p-1 hover:opacity-90"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Add Member
+      </label>
+      <input type="checkbox" id="add-template-modal" className="modal-toggle" />
+      <div className="modal">
+        <div className="modal-box bg-white p-10">
+          <input
+            type="text"
+            placeholder="Member account"
+            className="text-xl w-full rounded-2xl p-2 border border-blue-300"
+            value={memberAccount}
+            onChange={(event) => setMemberAccount(event.target.value)}
+          />
+          <div className="modal-action">
+            <label
+              htmlFor="add-template-modal"
+              className={`btn btn-primary ${isCreating ? "loading" : ""}`}
+              onClick={async (event) => {
+                event.preventDefault()
+                handleMemberAdd(memberAccount)
+              }}
+            >
+              Add
+            </label>
+            <label htmlFor="add-template-modal" className="btn">
+              Cancel
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   )
