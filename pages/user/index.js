@@ -1,9 +1,9 @@
 import { useGithubOrgMembers } from "../../utils"
 
 export default function User({ BACKEND_URL }) {
-  const { members, isMembersLoadingFailed } = useGithubOrgMembers(`${BACKEND_URL}/github/list-members`)
+  const { members, membersLoadingError } = useGithubOrgMembers(`${BACKEND_URL}/github/list-members`)
 
-  if (isMembersLoadingFailed) return <div>{JSON.stringify(error)}</div>
+  if (membersLoadingError) return <div>{JSON.stringify(membersLoadingError)}</div>
   if (!members) return <div>loading...</div>
 
   if (!members || members.length === 0) return <div className="member">No members found</div>
@@ -27,7 +27,7 @@ export default function User({ BACKEND_URL }) {
                 <th>{key + 1}</th>
                 <td>{member.login}</td>
                 <td>{member.html_url}</td>
-                <td></td>
+                <td>{member.teams.join(" | ")}</td>
               </tr>
             )
           })}

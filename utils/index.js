@@ -28,7 +28,7 @@ export function useGithubOrgMembers(url = "") {
 
   return {
     members: data,
-    isMembersLoadingFailed: error,
+    membersLoadingError: error,
   }
 }
 
