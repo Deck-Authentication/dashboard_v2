@@ -119,7 +119,7 @@ export function useGithubOrgActivities(url = "") {
     const accessToken = await getAccessToken()
     return await axios.get(`${url}`, { headers: { Authorization: `Bearer ${accessToken}` } }).then((res) => res.data.activities)
   }
-  const { data, error } = useSWR(url, fetcher)
+  const { data, error } = useSWR(url, fetcher, { refreshInterval: 500 })
 
   return {
     activities: data,

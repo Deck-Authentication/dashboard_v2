@@ -8,20 +8,78 @@ export default function Activity({ BACKEND_URL }) {
 
   return (
     <div className="activities p-5">
+      <div className="w-full border-b border-b-black my-8">
+        <h1 className="text-2xl font-bold">Activity</h1>
+      </div>
       <ul>
         {activities.map((activity, loopId) => (
-          <li key={loopId} className="border border-gray-300 p-2">
-            <p>
-              {activity.actor} did {activity.action} | timestamp {activity.created_at}
-              {activity.actor
-                ? `| location: ${
-                    activity.actor_location ? activity.actor_location.country_code : "automatically triggered action"
-                  }`
-                : ""}
-            </p>
+          <li key={loopId} className="log-msg border border-gray-300 p-2">
+            <LogMessage activity={activity} />
           </li>
         ))}
       </ul>
+    </div>
+  )
+}
+
+function LogMessage({ activity }) {
+  const unixTimestampToDate = (unixTimestamp) => {
+    const date = new Date(unixTimestamp)
+    return date.toLocaleString("en-US", { timeZoneName: "short" })
+  }
+
+  const { action, actor, created_at, user, org, team } = activity
+  let actionVerb = "",
+    actionSubject = "to"
+
+  switch (action) {
+    case "team.add_member":
+    case "org.add_member":
+      actionVerb = "added"
+      break
+    case "team.remove_member":
+    case "org.remove_member":
+      actionVerb = "removed"
+      actionSubject = "from"
+      break
+    case "org.invite_member":
+      actionVerb = "invited"
+      break
+    default:
+      actionVerb = "(undetected activity)"
+      break
+  }
+  const destination = () => {
+    const content = team ? team : org
+    const href = team ? `https://github.com/orgs/${org}/teams/${team.split("/")[1]}` : `https://github.com/${org}`
+
+    return (
+      <a href={href} className="text-blue-600 font-semibold hover:underline" target="_blank" rel="noopener noreferrer">
+        {content}
+      </a>
+    )
+  }
+
+  return (
+    <div className="">
+      <a
+        href={`https://github.com/${actor}`}
+        className="text-blue-600 font-semibold hover:underline"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {actor}
+      </a>{" "}
+      {actionVerb}{" "}
+      <a
+        href={`https://github.com/${user}`}
+        className="text-blue-600 font-semibold hover:underline"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {user}
+      </a>{" "}
+      {actionSubject} the {destination()} {team ? "team" : "organization"}| Time: {unixTimestampToDate(created_at)}
     </div>
   )
 }
