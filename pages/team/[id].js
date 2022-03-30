@@ -78,6 +78,7 @@ function TeamMembers({ members, teamSlug, BACKEND_URL }) {
     if (response.ok) {
       // reload the cache after adding a new member
       mutate(`${BACKEND_URL}/github/team/list-members?teamSlug=${teamSlug}`)
+      mutate(`${BACKEND_URL}/github/list-members`)
       toast.success("Member added", toastOption)
     } else toast.error("Error in adding the new member", toastOption)
     setIsCreating(false)
