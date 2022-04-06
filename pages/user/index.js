@@ -1,6 +1,7 @@
 import { useGithubOrgMembers } from "../../utils"
 import Link from "next/link"
 import { useAdminData } from "../../utils"
+import Spinner from "../../components/spinner"
 
 export default function User({ BACKEND_URL }) {
   const { admin, loadAdminError } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
@@ -10,14 +11,24 @@ export default function User({ BACKEND_URL }) {
     return (
       <div>Unable to load your data. Contact us at peter@withdeck.com and we will resolve this issue as soon as possible</div>
     )
-  else if (!admin) return <div>Loading...</div>
+  else if (!admin)
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    )
 
   const { github } = admin
   if (!github?.apiKey || !github?.organization)
     return <div>You need to set up your github account first under the Application tab.</div>
 
   if (membersLoadingError) return <div>{JSON.stringify(membersLoadingError)}</div>
-  if (!members) return <div>loading...</div>
+  if (!members)
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    )
 
   if (!members || members.length === 0) return <div className="member">No members found</div>
 
