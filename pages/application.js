@@ -10,12 +10,12 @@ import { toast } from "react-toastify"
 import { toastOption } from "../constants"
 
 export default function Application({ BACKEND_URL }) {
-  const { data, error } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
+  const { admin, loadAdminError } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
 
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
+  if (loadAdminError) return <div>failed to load</div>
+  if (!admin) return <div>loading...</div>
 
-  const { github } = data
+  const { github } = admin
 
   const handleSave = async (newApiKey, newOrganization) => {
     // Only fetch new data as members and teams from github if the organization field has changed
