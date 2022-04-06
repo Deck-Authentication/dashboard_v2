@@ -39,7 +39,9 @@ export default function Teams({ BACKEND_URL }) {
       <div>Unable to load your data. Contact us at peter@withdeck.com and we will resolve this issue as soon as possible</div>
     )
   else if (!admin) return <div>Loading...</div>
-  else if (!admin.github?.apiKey || !admin.github?.organization)
+
+  const { github } = admin
+  if (!github?.apiKey || !github?.organization)
     return <div>You need to set up your github account first under the Application tab.</div>
 
   if (teamsLoadError) {

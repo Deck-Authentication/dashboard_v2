@@ -1,8 +1,20 @@
 import { useGithubOrgMembers } from "../../utils"
 import Link from "next/link"
+import { useAdminData } from "../../utils"
 
 export default function User({ BACKEND_URL }) {
+  const { admin, loadAdminError } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
   const { members, membersLoadingError } = useGithubOrgMembers(`${BACKEND_URL}/github/list-members`)
+
+  if (loadAdminError)
+    return (
+      <div>Unable to load your data. Contact us at peter@withdeck.com and we will resolve this issue as soon as possible</div>
+    )
+  else if (!admin) return <div>Loading...</div>
+
+  const { github } = admin
+  if (!github?.apiKey || !github?.organization)
+    return <div>You need to set up your github account first under the Application tab.</div>
 
   if (membersLoadingError) return <div>{JSON.stringify(membersLoadingError)}</div>
   if (!members) return <div>loading...</div>
