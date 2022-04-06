@@ -1,4 +1,5 @@
 import { useGithubOrgActivities } from "../utils"
+import { useAdminData } from "../utils"
 
 export default function Activity({ BACKEND_URL }) {
   const { admin, loadAdminError } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
