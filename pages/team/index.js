@@ -1,4 +1,4 @@
-import { useGithubTeams, createNewTeam, deleteTeam } from "../../utils"
+import { useGithubTeams, useAdminData, createNewTeam, deleteTeam } from "../../utils"
 import { TeamCard, CreateTeamBtn } from "../../components/team"
 import { useRouter } from "next/router"
 import lodash from "lodash"
@@ -9,6 +9,7 @@ import { useSWRConfig } from "swr"
 
 export default function Teams({ BACKEND_URL }) {
   const { teams, teamsLoadError } = useGithubTeams(`${BACKEND_URL}/github/team/list-all`)
+  const { admin, loadAdminError } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
   const [isCreatingTeam, setIsCreatingTeam] = useState(false)
   const [isDeletingTeam, setIsDeletingTeam] = useState(false)
   const { mutate } = useSWRConfig()
@@ -33,9 +34,16 @@ export default function Teams({ BACKEND_URL }) {
     toast.success(`Team ${team.name} deleted successfully`, toastOption)
   }
 
+  if (loadAdminError)
+    return (
+      <div>Unable to load your data. Contact us at peter@withdeck.com and we will resolve this issue as soon as possible</div>
+    )
+  else if (!admin) return <div>Loading...</div>
+  else if (!admin.github?.apiKey || !admin.github?.organization)
+    return <div>You need to set up your github account first under the Application tab.</div>
+
   if (teamsLoadError) {
-    console.log(teamsLoadError)
-    return <div>Error: {JSON.stringify(teamsLoadError)}</div>
+    return <div>Unable to load teams. Contact us at peter@withdeck.com and we will resolve this issue as soon as possible</div>
   } else if (!teams) return <div>Loading...</div>
 
   return (

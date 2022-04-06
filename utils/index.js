@@ -38,7 +38,12 @@ export function useAdminData(url = "") {
     return await axios.get(`${_url}`, { headers: { Authorization: `Bearer ${accessToken}` } }).then((res) => res.data.admin)
   }
 
-  return useSWR(url, fetcher)
+  const { data, error } = useSWR(url, fetcher)
+
+  return {
+    admin: data,
+    loadAdminError: error,
+  }
 }
 
 export async function saveGithubCredentials(url = "", apiKey = "", organization = "") {
