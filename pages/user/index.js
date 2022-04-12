@@ -2,10 +2,12 @@ import { useGithubOrgMembers } from "../../utils"
 import Link from "next/link"
 import { useAdminData } from "../../utils"
 import Spinner from "../../components/spinner"
+import { useRouter } from "next/router"
 
 export default function User({ BACKEND_URL }) {
   const { admin, loadAdminError } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
   const { members, membersLoadingError } = useGithubOrgMembers(`${BACKEND_URL}/github/list-members`)
+  const router = useRouter()
 
   if (loadAdminError)
     return (
@@ -19,8 +21,14 @@ export default function User({ BACKEND_URL }) {
     )
 
   const { github } = admin
-  if (!github?.apiKey || !github?.organization)
-    return <div>You need to set up your github account first under the Application tab.</div>
+  if (!github?.apiKey || !github?.organization) {
+    router.push("/onboarding")
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    )
+  }
 
   if (membersLoadingError) return <div>{JSON.stringify(membersLoadingError)}</div>
   if (!members)

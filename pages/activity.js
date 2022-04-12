@@ -1,10 +1,12 @@
 import { useGithubOrgActivities } from "../utils"
 import { useAdminData } from "../utils"
 import Spinner from "../components/spinner"
+import { useRouter } from "next/router"
 
 export default function Activity({ BACKEND_URL }) {
   const { admin, loadAdminError } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
   const { activities, loadActivitiesError } = useGithubOrgActivities(`${BACKEND_URL}/github/list-activities?perPage=100`)
+  const router = useRouter()
 
   if (loadAdminError)
     return (
@@ -18,8 +20,14 @@ export default function Activity({ BACKEND_URL }) {
     )
 
   const { github } = admin
-  if (!github?.apiKey || !github?.organization)
-    return <div>You need to set up your github account first under the Application tab.</div>
+  if (!github?.apiKey || !github?.organization) {
+    router.push("/onboarding")
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    )
+  }
 
   if (loadActivitiesError) return <div>Error loading activities</div>
   else if (!activities)

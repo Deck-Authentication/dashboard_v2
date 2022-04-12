@@ -47,8 +47,14 @@ export default function Teams({ BACKEND_URL }) {
     )
 
   const { github } = admin
-  if (!github?.apiKey || !github?.organization)
-    return <div>You need to set up your github account first under the Application tab.</div>
+  if (!github?.apiKey || !github?.organization) {
+    router.push("/onboarding")
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    )
+  }
 
   if (teamsLoadError) {
     return <div>Unable to load teams. Contact us at peter@withdeck.com and we will resolve this issue as soon as possible</div>
