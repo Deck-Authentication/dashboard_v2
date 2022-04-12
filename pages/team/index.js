@@ -6,6 +6,7 @@ import { useState, useRef } from "react"
 import { toast } from "react-toastify"
 import { toastOption } from "../../constants"
 import { useSWRConfig } from "swr"
+import Spinner from "../../components/spinner"
 
 export default function Teams({ BACKEND_URL }) {
   const { teams, teamsLoadError } = useGithubTeams(`${BACKEND_URL}/github/team/list-all`)
@@ -38,7 +39,12 @@ export default function Teams({ BACKEND_URL }) {
     return (
       <div>Unable to load your data. Contact us at peter@withdeck.com and we will resolve this issue as soon as possible</div>
     )
-  else if (!admin) return <div>Loading...</div>
+  else if (!admin)
+    return (
+      <div className="w-full h-full grid place-content-center">
+        <Spinner />
+      </div>
+    )
 
   const { github } = admin
   if (!github?.apiKey || !github?.organization)
@@ -46,7 +52,12 @@ export default function Teams({ BACKEND_URL }) {
 
   if (teamsLoadError) {
     return <div>Unable to load teams. Contact us at peter@withdeck.com and we will resolve this issue as soon as possible</div>
-  } else if (!teams) return <div>Loading...</div>
+  } else if (!teams)
+    return (
+      <div className="w-full h-full grid place-content-center">
+        <Spinner />
+      </div>
+    )
 
   return (
     <div className="teams w-full h-full flex flex-col items-center p-5">
