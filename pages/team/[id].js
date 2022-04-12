@@ -7,6 +7,7 @@ import { toastOption } from "../../constants"
 import { useSWRConfig } from "swr"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons"
+import Spinner from "../../components/spinner"
 
 export default function Team({ id, BACKEND_URL }) {
   const teamSlug = id
@@ -17,7 +18,12 @@ export default function Team({ id, BACKEND_URL }) {
 
   if (loadReposError) return <div>Failed to load repos</div>
   else if (loadMembersError) return <div>Failed to load members</div>
-  if (!repos || !members) return <div>Loading...</div>
+  if (!repos || !members)
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    )
 
   const handleTabChange = (event, newTab) => {
     event.preventDefault()

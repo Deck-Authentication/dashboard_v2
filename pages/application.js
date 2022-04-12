@@ -8,12 +8,18 @@ import { Formik, Form, Field, ErrorMessage } from "formik"
 import { useRef } from "react"
 import { toast } from "react-toastify"
 import { toastOption } from "../constants"
+import Spinner from "../components/spinner"
 
 export default function Application({ BACKEND_URL }) {
   const { admin, loadAdminError } = useAdminData(`${BACKEND_URL}/admin/get-all-data`)
 
   if (loadAdminError) return <div>failed to load</div>
-  if (!admin) return <div>loading...</div>
+  if (!admin)
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    )
 
   const { github } = admin
 
